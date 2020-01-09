@@ -3,11 +3,12 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve -o",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "build:widget": "ng build widget --prod --single-bundle --output-hashing none && cpr dist/widget/main-es2015.js ./src/assets/main.js -o"
   },
   "private": true,
   "dependencies": {
@@ -15,10 +16,13 @@
     "@angular/common": "~9.0.0-rc.7",
     "@angular/compiler": "~9.0.0-rc.7",
     "@angular/core": "~9.0.0-rc.7",
+    "@angular/elements": "^8.2.14",
     "@angular/forms": "~9.0.0-rc.7",
     "@angular/platform-browser": "~9.0.0-rc.7",
     "@angular/platform-browser-dynamic": "~9.0.0-rc.7",
     "@angular/router": "~9.0.0-rc.7",
+    "document-register-element": "^1.7.2",
+    "ngx-build-plus": "^9.0.2",
     "rxjs": "~6.5.3",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"
@@ -28,10 +32,11 @@
     "@angular/cli": "~9.0.0-rc.7",
     "@angular/compiler-cli": "~9.0.0-rc.7",
     "@angular/language-service": "~9.0.0-rc.7",
-    "@types/node": "^12.11.1",
     "@types/jasmine": "~3.5.0",
     "@types/jasminewd2": "~2.0.3",
+    "@types/node": "^12.11.1",
     "codelyzer": "^5.1.2",
+    "cpr": "^3.0.1",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~4.3.0",

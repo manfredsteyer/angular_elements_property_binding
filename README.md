@@ -1,27 +1,44 @@
-# Demo
+# Using Standalone Angular Elements within Angular
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.0.0-rc.7.
+## Build and Execute
 
-## Development server
+- Build widget: ``npm run build:widget``
+  - This also copies the bundle to the host app (``/src/assets/``)
+- Start host application: ``npm start``
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Solution
 
-## Code scaffolding
+In order to allow data binding in the host application to the standalone Angular Element, we have to do two things.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### 1. Share NgZone
 
-## Build
+This little hack makes sure, both Angular apps, the host and the standalone Element, use the same instance of NgZone.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+```typescript
+// app.component.ts in host application
+constructor(private zone: NgZone) {
+  // HACK to share zone with child widget
+  (window as any).zone = zone;
+}
+```
 
-## Running unit tests
+Then, use this zone instance when bootstraping the standalone element:
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+```typescript
+platformBrowserDynamic()
+    .bootstrapModule(AppModule, { ngZone: (window as any).zone })
+    .catch(err => console.error(err));
+```
 
-## Running end-to-end tests
+### 2. Don't use Angular-based Data Binding BEFORE the Standalone Element is Loaded
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+In this case, I set the property loaded to true after the standalone element was loaded.
 
-## Further help
+```html
+<div *ngIf="loaded">
+    <demo-widget [input]="data"></demo-widget>
+</div>
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+This is esp necessary when loading bundles on demand which is the case in this example.
+
